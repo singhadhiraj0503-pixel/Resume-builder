@@ -9,6 +9,7 @@ export const POST = async (req: NextRequest) => {
     await connectToDB();
 
     const userId = await getCurrentUser();
+    console.log("Current user ID:", userId);
 
     const newResume = await resumeModel.create({
       user_id: userId,
@@ -31,13 +32,33 @@ export const POST = async (req: NextRequest) => {
       { status: 201 },
     );
   } catch (error) {
-    console.log("Error in create resume API!!", error);
-    return NextResponse.json<APIResponse>(
+    console.error("========== CREATE RESUME ERROR ==========");
+    console.error(error);
+
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+
+    console.error("==========================================");
+
+    return NextResponse.json(
       {
         success: false,
-        message: "Something went wrong",
+        message:
+          error instanceof Error ? error.message : "Something went wrong",
       },
       { status: 500 },
     );
   }
+  // } catch (error) {
+  //   console.log("Error in create resume API!!", error);
+  //   return NextResponse.json<APIResponse>(
+  //     {
+  //       success: false,
+  //       message: "Something went wrong",
+  //     },
+  //     { status: 500 },
+  //   );
+  // }
 };

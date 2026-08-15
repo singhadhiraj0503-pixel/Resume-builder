@@ -11,13 +11,13 @@ export const GET = async (
   try {
     await connectToDB();
 
-    const user = await getCurrentUser();
+    const userId = await getCurrentUser();
 
     const { resumeId } = await params;
 
     const resume = await resumeModel.findOne({
       _id: resumeId,
-      user_id: user.user_id,
+      user_id: userId,
     });
 
     if (!resume) {
@@ -50,7 +50,7 @@ export const PATCH = async (
   try {
     await connectToDB();
 
-    const user = await getCurrentUser();
+    const userId = await getCurrentUser();
 
     const body = await req.json();
 
@@ -59,7 +59,7 @@ export const PATCH = async (
     const updateResume = await resumeModel.findOneAndUpdate(
       {
         _id: resumeId,
-        user_id: user.userId,
+        user_id: userId,
       },
       { $set: body },
       { new: true, runValidators: true },

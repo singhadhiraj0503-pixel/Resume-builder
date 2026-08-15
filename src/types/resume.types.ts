@@ -47,3 +47,31 @@ export interface IResume {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+/* =========================
+   Resume API Responses
+========================= */
+
+export interface CreateResumeResponse {
+  success: boolean;
+  message: string;
+  data: IResume;
+}
+
+export interface GetResumeResponse {
+  success: boolean;
+  message: string;
+  data: IResume;
+}
+
+export interface GetResumesResponse {
+  success: boolean;
+  message: string;
+  data: IResume[];
+}
+
+export interface UpdateResumeResponse {
+  success: boolean;
+  message: string;
+  data: IResume;
+}
