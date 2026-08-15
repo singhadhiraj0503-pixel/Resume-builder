@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createResume } from "@/services/resume.service";
+import { createResume, getAllResumes } from "@/services/resume.service";
 import { IResume } from "@/types/resume.types";
 
 const Dashboard = () => {
@@ -10,11 +10,59 @@ const Dashboard = () => {
 
   const [resumes, setResumes] = useState<IResume[]>([]);
   const [creating, setCreating] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadResumes = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await getAllResumes();
+
+        setResumes(response.data || []);
+      } catch (error) {
+        console.error("Failed to load resumes:", error);
+
+        setError(
+          error instanceof Error ? error.message : "Failed to load resumes",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadResumes();
+  }, []);
 
   /*
    * Create a new resume
    */
+  // const handleCreateResume = async () => {
+  //   try {
+  //     setCreating(true);
+  //     setError("");
+
+  //     const response = await createResume();
+
+  //     const newResume = response.data;
+
+  //     setResumes((prev) => [...prev, newResume]);
+
+  //     // Open the newly created resume
+  //     router.push(`/resume/${newResume._id}`);
+  //   } catch (error) {
+  //     console.error("Failed to create resume:", error);
+
+  //     setError(
+  //       error instanceof Error ? error.message : "Failed to create resume",
+  //     );
+  //   } finally {
+  //     setCreating(false);
+  //   }
+  // };
+
   const handleCreateResume = async () => {
     try {
       setCreating(true);
@@ -24,9 +72,6 @@ const Dashboard = () => {
 
       const newResume = response.data;
 
-      setResumes((prev) => [...prev, newResume]);
-
-      // Open the newly created resume
       router.push(`/resume/${newResume._id}`);
     } catch (error) {
       console.error("Failed to create resume:", error);
@@ -66,6 +111,14 @@ const Dashboard = () => {
       resume.education?.length,
     );
   };
+
+  if (loading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#FAF9FF]">
+        <div className="text-sm text-[#5A6374]">Loading resumes...</div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#FAF9FF] text-[#172033]">

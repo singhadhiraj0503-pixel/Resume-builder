@@ -8,6 +8,7 @@ interface StepNavigationProps {
   saving: boolean;
   onBack: () => void;
   onNext: () => void;
+  onFinish: () => void;
 }
 
 const StepNavigation = ({
@@ -16,6 +17,7 @@ const StepNavigation = ({
   saving,
   onBack,
   onNext,
+  onFinish,
 }: StepNavigationProps) => {
   const lastStep = currentStep === totalSteps - 1;
 
@@ -47,7 +49,7 @@ const StepNavigation = ({
         Back
       </button>
 
-      {!lastStep && (
+      {/* {!lastStep && (
         <button
           type="button"
           onClick={onNext}
@@ -68,6 +70,76 @@ const StepNavigation = ({
             disabled:cursor-not-allowed
             disabled:opacity-60
           "
+        >
+          {saving ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              Next
+              <ArrowRight className="h-5 w-5" />
+            </>
+          )}
+        </button>
+      )} */}
+
+      {lastStep ? (
+        <button
+          type="button"
+          onClick={onFinish}
+          disabled={saving}
+          className="
+      inline-flex
+      items-center
+      gap-2
+      rounded-lg
+      bg-[#3526D9]
+      px-6
+      py-3
+      text-sm
+      font-medium
+      text-white
+      transition
+      hover:bg-[#2E20C6]
+      disabled:cursor-not-allowed
+      disabled:opacity-60
+    "
+        >
+          {saving ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              Save Resume
+              <ArrowRight className="h-5 w-5" />
+            </>
+          )}
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={saving}
+          className="
+      inline-flex
+      items-center
+      gap-2
+      rounded-lg
+      bg-[#3526D9]
+      px-6
+      py-3
+      text-sm
+      font-medium
+      text-white
+      transition
+      hover:bg-[#2E20C6]
+      disabled:cursor-not-allowed
+      disabled:opacity-60
+    "
         >
           {saving ? (
             <>

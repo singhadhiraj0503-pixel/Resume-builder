@@ -79,17 +79,59 @@ const getResume = async (resumeId: string): Promise<GetResumeResponse> => {
 /**
  * Update a resume by ID
  */
+// const updateResume = async (
+//   resumeId: string,
+//   resumeData: Partial<IResume>,
+// ): Promise<UpdateResumeResponse> => {
+//   const response = await fetch(`/api/resume/${resumeId}`, {
+//     method: "PATCH",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     credentials: "include",
+//     body: JSON.stringify(resumeData),
+//   });
+
+//   const text = await response.text();
+
+//   let data: UpdateResumeResponse | null = null;
+
+//   try {
+//     data = text ? JSON.parse(text) : null;
+//   } catch {
+//     throw new Error(`Server returned an invalid response (${response.status})`);
+//   }
+
+//   if (!response.ok) {
+//     throw new Error(
+//       data?.message || `Failed to update resume (${response.status})`,
+//     );
+//   }
+
+//   if (!data) {
+//     throw new Error("Server returned an empty response");
+//   }
+
+//   return data;
+// };
+
 const updateResume = async (
   resumeId: string,
   resumeData: Partial<IResume>,
 ): Promise<UpdateResumeResponse> => {
+  const { _id, user_id, createdAt, updatedAt, ...editableResumeData } =
+    resumeData as IResume & {
+      createdAt?: string;
+      updatedAt?: string;
+    };
+
   const response = await fetch(`/api/resume/${resumeId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify(resumeData),
+    body: JSON.stringify(editableResumeData),
   });
 
   const text = await response.text();

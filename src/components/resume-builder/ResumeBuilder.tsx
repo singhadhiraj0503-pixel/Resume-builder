@@ -158,6 +158,25 @@ const ResumeBuilder = ({ resumeId }: Props) => {
     }
   };
 
+  const handleFinish = async () => {
+    try {
+      setSaving(true);
+      setError("");
+
+      await saveResume();
+
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Failed to save resume:", error);
+
+      setError(
+        error instanceof Error ? error.message : "Failed to save resume",
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
   /*
    * Back
    */
@@ -333,6 +352,7 @@ const ResumeBuilder = ({ resumeId }: Props) => {
                 saving={saving}
                 onBack={handleBack}
                 onNext={handleNext}
+                onFinish={handleFinish}
               />
             </div>
           </div>
