@@ -88,3 +88,45 @@ export const PATCH = async (
     );
   }
 };
+
+export const DELETE = async (
+  req: NextRequest,
+  { params }: { params: Promise<{ resumeId: string }> },
+) => {
+  try {
+    await connectToDB();
+
+    const userId = await getCurrentUser();
+
+    const { resumeId } = await params;
+
+    const deleteResume = await resumeModel.deleteOne({
+      _id: resumeId,
+      user_id: userId,
+    });
+
+    if (deleteResume.deletedCount === 0) {
+      return NextResponse.json<APIResponse>(
+        {
+          success: false,
+          message: "Resume not found or you are not authorized to delete it",
+        },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json<APIResponse>(
+      { success: true, message: "Resume Deleted successfully" },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.log("Error in DELETE resume API!!", error);
+    return NextResponse.json<APIResponse>(
+      {
+        success: false,
+        message: "SOmething went wrong",
+      },
+      { status: 500 },
+    );
+  }
+};

@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createResume, getAllResumes } from "@/services/resume.service";
+import {
+  createResume,
+  deleteResume,
+  getAllResumes,
+} from "@/services/resume.service";
 import { IResume } from "@/types/resume.types";
 
 const Dashboard = () => {
@@ -10,6 +14,7 @@ const Dashboard = () => {
 
   const [resumes, setResumes] = useState<IResume[]>([]);
   const [creating, setCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -96,6 +101,31 @@ const Dashboard = () => {
    */
   const handleView = (resumeId: string) => {
     router.push(`/preview/${resumeId}`);
+  };
+
+  const handleDelete = async (resumeId: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this resume?",
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setDeletingId(resumeId);
+      setError("");
+
+      await deleteResume(resumeId);
+
+      setResumes((prev) => prev.filter((resume) => resume._id !== resumeId));
+    } catch (error) {
+      console.error("Failed to delete resume:", error);
+
+      setError(
+        error instanceof Error ? error.message : "Failed to delete resume",
+      );
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   /*
@@ -339,7 +369,8 @@ const Dashboard = () => {
 
                   <button
                     type="button"
-                    disabled
+                    onClick={() => handleDelete(resume._id!)}
+                    // disabled={deletingId === resume._id}
                     className="flex cursor-not-allowed items-center justify-center gap-2 py-4 text-[15px] text-red-400 opacity-70"
                   >
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none">

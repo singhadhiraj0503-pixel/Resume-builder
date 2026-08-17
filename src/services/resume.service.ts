@@ -1,3 +1,4 @@
+import { APIResponse } from "@/types/api.types";
 import {
   CreateResumeResponse,
   GetResumeResponse,
@@ -157,6 +158,35 @@ const updateResume = async (
   return data;
 };
 
+const deleteResume = async (resumeId: string): Promise<APIResponse> => {
+  const response = await fetch(`/api/resume/${resumeId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const text = await response.text();
+
+  let data: APIResponse | null = null;
+
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    throw new Error(`Server returned an invalid response (${response.status})`);
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data?.message || `Failed to delete resume (${response.status})`,
+    );
+  }
+
+  if (!data) {
+    throw new Error("Server returned an empty response");
+  }
+
+  return data;
+};
+
 const getAllResumes = async (): Promise<GetResumesResponse> => {
   const response = await fetch("/api/resume", {
     method: "GET",
@@ -186,4 +216,4 @@ const getAllResumes = async (): Promise<GetResumesResponse> => {
   return data;
 };
 
-export { createResume, getResume, updateResume, getAllResumes };
+export { createResume, getResume, updateResume, getAllResumes, deleteResume };
