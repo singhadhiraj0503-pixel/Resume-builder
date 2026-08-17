@@ -70,4 +70,33 @@ const loginUser = async (payload: LoginPayload): Promise<AuthResponse> => {
   return data;
 };
 
-export { registerUser, loginUser };
+const getCurrentUser = async (): Promise<AuthResponse> => {
+  const response = await fetch("/api/auth/me", {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const text = await response.text();
+
+  let data: AuthResponse | null = null;
+
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    throw new Error(`Server returned an invalid response (${response.status})`);
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data?.message || `Failed to get current user (${response.status})`,
+    );
+  }
+
+  if (!data) {
+    throw new Error("Server returned an empty response");
+  }
+
+  return data;
+};
+
+export { registerUser, loginUser, getCurrentUser };

@@ -8,37 +8,67 @@ import {
   getAllResumes,
 } from "@/services/resume.service";
 import { IResume } from "@/types/resume.types";
+import { IUser } from "@/types/user.types";
+import { getCurrentUser } from "@/services/auth.service";
 
 const Dashboard = () => {
   const router = useRouter();
 
+  const [user, setUser] = useState<IUser | null>(null);
   const [resumes, setResumes] = useState<IResume[]>([]);
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // useEffect(() => {
+  //   const loadResumes = async () => {
+  //     try {
+  //       setLoading(true);
+  //       setError("");
+
+  //       const response = await getAllResumes();
+
+  //       setResumes(response.data || []);
+  //     } catch (error) {
+  //       console.error("Failed to load resumes:", error);
+
+  //       setError(
+  //         error instanceof Error ? error.message : "Failed to load resumes",
+  //       );
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   loadResumes();
+  // }, []);
+
   useEffect(() => {
-    const loadResumes = async () => {
+    const loadDashboard = async () => {
       try {
         setLoading(true);
         setError("");
 
-        const response = await getAllResumes();
+        const [userResponse, resumeResponse] = await Promise.all([
+          getCurrentUser(),
+          getAllResumes(),
+        ]);
 
-        setResumes(response.data || []);
+        setUser(userResponse.data || null);
+        setResumes(resumeResponse.data || []);
       } catch (error) {
-        console.error("Failed to load resumes:", error);
+        console.error("Failed to load dashboard:", error);
 
         setError(
-          error instanceof Error ? error.message : "Failed to load resumes",
+          error instanceof Error ? error.message : "Failed to load dashboard",
         );
       } finally {
         setLoading(false);
       }
     };
 
-    loadResumes();
+    loadDashboard();
   }, []);
 
   /*
@@ -208,8 +238,12 @@ const Dashboard = () => {
         {/* Welcome */}
 
         <div>
-          <h1 className="font-serif text-[38px] font-bold leading-tight tracking-[-1px] text-[#182033] sm:text-[40px]">
+          {/* <h1 className="font-serif text-[38px] font-bold leading-tight tracking-[-1px] text-[#182033] sm:text-[40px]">
             Welcome back, Alex
+          </h1> */}
+
+          <h1 className="font-serif text-[38px] font-bold leading-tight tracking-[-1px] text-[#182033] sm:text-[40px]">
+            Welcome back, {user?.name || "User"}
           </h1>
 
           <p className="mt-3 font-serif text-[20px] text-[#4C4F5C]">
