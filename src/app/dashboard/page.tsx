@@ -95,7 +95,7 @@ const Dashboard = () => {
    * Open resume preview
    */
   const handleView = (resumeId: string) => {
-    router.push(`/resume/${resumeId}?mode=view`);
+    router.push(`/preview/${resumeId}`);
   };
 
   /*
