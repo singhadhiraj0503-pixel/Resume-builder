@@ -190,8 +190,8 @@ const Dashboard = () => {
 
           <button
             type="button"
-            onClick={() => router.push("/dashboard")}
-            className="font-serif text-[24px] font-bold tracking-[-0.5px] text-[#3428B9]"
+            onClick={() => router.push("/")}
+            className="cursor-pointer font-serif text-[24px] font-bold tracking-[-0.5px] text-[#3428B9]"
           >
             ResumeCraft
           </button>
