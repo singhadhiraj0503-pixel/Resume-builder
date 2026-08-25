@@ -49,7 +49,7 @@ const HomePage = () => {
           {/* Navigation */}
           <nav className="hidden items-center gap-7 md:flex">
             <a
-              href="#features"
+              href="/features"
               className="text-[11px] text-[#34415e] transition hover:text-[#3427c7]"
             >
               Features
