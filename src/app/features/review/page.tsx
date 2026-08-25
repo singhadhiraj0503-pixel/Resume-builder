@@ -7,9 +7,11 @@ import { FileUp, Download, Eye, ChevronDown, Loader2 } from "lucide-react";
 // import { generateAtsScore } from "@/services/ai.service";
 import { extractResumeText } from "@/lib/extractResumeText";
 import { generateATSScore } from "@/services/ai.service";
+import { useRouter } from "next/navigation";
 
 const ReviewResumePage = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const router = useRouter();
 
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -50,61 +52,39 @@ const ReviewResumePage = () => {
   };
 
   const handleReviewResume = async () => {
-    if (!file) {
-      setError("Please select a resume first.");
-      return;
-    }
-
     try {
+      if (!file) {
+        throw new Error("Please upload a resume");
+      }
+
       setIsLoading(true);
       setError("");
 
-      // Extract PDF/DOCX → plain text
       const resumeText = await extractResumeText(file);
 
-      if (!resumeText.trim()) {
-        throw new Error("Could not extract text from this resume.");
+      console.log("Extracted resume text:", resumeText);
+      console.log("Text length:", resumeText?.length);
+
+      if (!resumeText?.trim()) {
+        throw new Error(
+          "Could not extract text from this resume. Please upload a text-based PDF.",
+        );
       }
 
-      // Send extracted text to backend
-      const response = await generateATSScore(resumeText);
+      const result = await generateATSScore({
+        resumeText: resumeText.trim(),
+      });
 
-      if (!response.data?.atsScore) {
-        throw new Error("ATS analysis was not returned by the server.");
-      }
+      console.log("ATS result:", result);
 
-      let atsResult = response.data.atsScore;
-
-      /*
-       * Your current backend receives Gemini's response as
-       * a string because generateAIContent() returns response.text.
-       */
-      if (typeof atsResult === "string") {
-        try {
-          atsResult = JSON.parse(atsResult);
-        } catch {
-          throw new Error("The ATS service returned an invalid AI response.");
-        }
-      }
-
-      // Store result temporarily for the result page
-      sessionStorage.setItem(
-        "resumeCraftAtsResult",
-        JSON.stringify({
-          result: atsResult,
-          fileName: file.name,
-        }),
-      );
-
-      // Navigate to the result page
-      window.location.href = "/features/review/rewsult";
+      // Save result if needed
+      // Navigate to result page
+      router.push("/features/review/result");
     } catch (error) {
-      console.error("ATS review error:", error);
+      console.error("Review resume error:", error);
 
       setError(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong while reviewing your resume.",
+        error instanceof Error ? error.message : "Failed to review resume",
       );
     } finally {
       setIsLoading(false);

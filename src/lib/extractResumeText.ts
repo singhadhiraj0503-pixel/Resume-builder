@@ -23,11 +23,10 @@ const extractPdfText = async (file: File): Promise<string> => {
   // Dynamically import PDF.js
   const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
 
-  // Tell PDF.js where its worker is located
   pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+
   const arrayBuffer = await file.arrayBuffer();
 
-  // Load PDF
   const pdf = await pdfjsLib.getDocument({
     data: arrayBuffer,
   }).promise;
