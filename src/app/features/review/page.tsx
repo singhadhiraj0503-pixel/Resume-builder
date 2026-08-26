@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { FileUp, Download, Eye, ChevronDown, Loader2 } from "lucide-react";
 
 // import { generateAtsScore } from "@/services/ai.service";
-import { extractResumeText } from "@/lib/extractResumeText";
+import { extractPdfText, extractResumeText } from "@/lib/extractResumeText";
 import { generateATSScore } from "@/services/ai.service";
 import { useRouter } from "next/navigation";
 
@@ -52,39 +52,55 @@ const ReviewResumePage = () => {
   };
 
   const handleReviewResume = async () => {
-    try {
-      if (!file) {
-        throw new Error("Please upload a resume");
-      }
+    if (!file) {
+      setError("Please upload a resume.");
+      return;
+    }
 
+    try {
       setIsLoading(true);
       setError("");
 
-      const resumeText = await extractResumeText(file);
+      // STEP 1
+      const resumeText = await extractPdfText(file);
 
-      console.log("Extracted resume text:", resumeText);
-      console.log("Text length:", resumeText?.length);
+      console.log("Extracted text:", resumeText);
+      console.log("Characters:", resumeText.length);
 
-      if (!resumeText?.trim()) {
-        throw new Error(
-          "Could not extract text from this resume. Please upload a text-based PDF.",
-        );
+      // STEP 2
+      if (!resumeText.trim()) {
+        throw new Error("Could not extract any text from this PDF.");
       }
 
-      const result = await generateATSScore({
+      // STEP 3
+      const response = await generateATSScore({
         resumeText: resumeText.trim(),
       });
 
-      console.log("ATS result:", result);
+      console.log("ATS response:", response);
 
-      // Save result if needed
-      // Navigate to result page
+      // STEP 4
+      // sessionStorage.setItem("atsResult", JSON.stringify(response));
+
+      sessionStorage.setItem(
+        "resumeCraftAtsResult",
+        JSON.stringify({
+          result: response.data.atsScore,
+          fileName: file.name,
+        }),
+      );
+
+      console.log("ATS response:", response);
+      console.log("ATS result:", response.data?.atsScore);
+      console.log("ATS result type:", typeof response.data?.atsScore);
+
+      // STEP 5
       router.push("/features/review/result");
     } catch (error) {
-      console.error("Review resume error:", error);
+      console.error("ATS review failed:", error);
 
       setError(
-        error instanceof Error ? error.message : "Failed to review resume",
+        error instanceof Error ? error.message : "Failed to analyze resume",
       );
     } finally {
       setIsLoading(false);

@@ -14,7 +14,7 @@ export const extractResumeText = async (file: File): Promise<string> => {
   throw new Error("Unsupported file type. Please upload a PDF or DOCX file.");
 };
 
-const extractPdfText = async (file: File): Promise<string> => {
+export const extractPdfText = async (file: File): Promise<string> => {
   // PDF.js must run in the browser
   if (typeof window === "undefined") {
     throw new Error("PDF extraction must be performed in the browser.");
