@@ -282,10 +282,10 @@ const ReviewResumePage = () => {
               type="button"
               onClick={handleReviewResume}
               disabled={!file || isLoading}
-              className={`flex h-[48px] min-w-[185px] items-center justify-center gap-2 rounded-[5px] px-7 text-[14px] font-medium transition ${
+              className={`flex h-[48px] min-w-[185px] items-center justify-center gap-2 cursor-pointer rounded-[5px] px-7 text-[14px] font-medium transition ${
                 file && !isLoading
                   ? "bg-[#9188e3] text-white hover:bg-[#4033d4]"
-                  : "cursor-not-allowed bg-[#9188e3] text-white opacity-80"
+                  : "cursor-not-allowed cursor-pointer bg-[#9188e3] text-white opacity-80"
               }`}
             >
               {isLoading ? (
