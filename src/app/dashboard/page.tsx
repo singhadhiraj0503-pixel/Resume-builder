@@ -8,13 +8,13 @@ import {
   getAllResumes,
 } from "@/services/resume.service";
 import { IResume } from "@/types/resume.types";
-import { IUser } from "@/types/user.types";
+import { IUser, IUserResponse } from "@/types/user.types";
 import { getCurrentUser } from "@/services/auth.service";
 
 const Dashboard = () => {
   const router = useRouter();
 
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user, setUser] = useState<IUserResponse | null>(null);
   const [resumes, setResumes] = useState<IResume[]>([]);
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -55,7 +55,8 @@ const Dashboard = () => {
           getAllResumes(),
         ]);
 
-        setUser(userResponse.data || null);
+        // setUser(userResponse.data || null);
+        setUser(userResponse.data?.user || null);
         setResumes(resumeResponse.data || []);
       } catch (error) {
         console.error("Failed to load dashboard:", error);

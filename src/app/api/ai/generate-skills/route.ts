@@ -54,7 +54,21 @@ export const POST = async (req: NextRequest) => {
     Your response MUST start with [ and end with ].
     `;
 
+    // const result = await generateAIContent(prompt);
+    // const skills = JSON.parse(result);
+
     const result = await generateAIContent(prompt);
+
+    if (!result) {
+      return NextResponse.json<APIResponse>(
+        {
+          success: false,
+          message: "Failed to generate skills",
+        },
+        { status: 500 },
+      );
+    }
+
     const skills = JSON.parse(result);
 
     return NextResponse.json<APIResponse>(

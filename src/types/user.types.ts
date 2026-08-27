@@ -8,6 +8,12 @@ export interface IUser {
   updatedAt?: Date;
 }
 
+export interface IUserResponse {
+  _id: string;
+  name: string;
+  email: string;
+}
+
 export interface RegisterBody {
   name: string;
   email: string;
