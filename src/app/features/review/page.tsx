@@ -62,7 +62,8 @@ const ReviewResumePage = () => {
       setError("");
 
       // STEP 1
-      const resumeText = await extractPdfText(file);
+      // const resumeText = await extractPdfText(file);
+      const resumeText = await extractResumeText(file);
 
       console.log("Extracted text:", resumeText);
       console.log("Characters:", resumeText.length);

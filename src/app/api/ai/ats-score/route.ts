@@ -199,10 +199,17 @@ All other fields MUST contain appropriate strings or arrays of strings.
     );
   } catch (error) {
     console.log("Error in ATS Score API!!", error);
+
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Unknown error occurred while generating ATS score";
+
     return NextResponse.json<APIResponse>(
       {
         success: false,
-        message: "Something went wrong",
+        // message: "Something went wrong",
+        message,
       },
       { status: 500 },
     );
